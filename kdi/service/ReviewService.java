@@ -3,15 +3,20 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
 
     @Autowired
-    public ReviewService (ReviewRepository reviewRepository) {
+    public ReviewService(ReviewRepository reviewRepository) {
         this.reviewRepository = reviewRepository;
     }
 
     @Transactional
-    public void saveReview(ReviewForm reviewForm) {
+    public void create(ReviewRegisterForm reviewRegisterForm) {
         Review review = new Review();
-        review.setRating(reviewForm.getRating());
-        review.setComment(reviewForm.getComment())
+        review.setRating(reviewRegisterForm.getRating());
+        review.setComment(reviewRegisterForm.getComment())
         reviewRepository.save(review);
+    }
+
+    @Transactional
+    public void update(ReviewEditForm reviewEditForm) {
+        Review review = reviewRepository.getReferenceById(reviewEditForm.getId());
     }
 }

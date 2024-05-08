@@ -1,0 +1,19 @@
+.review-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.review-box {
+    border: 1px solid #000;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.review-box:nth-child(odd) {
+    grid-column: span 1;
+}
+
+.review-box:nth-child(even) {
+    grid-column: span 1;
+}
