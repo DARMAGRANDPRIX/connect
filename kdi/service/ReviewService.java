@@ -18,5 +18,8 @@ public class ReviewService {
     @Transactional
     public void update(ReviewEditForm reviewEditForm) {
         Review review = reviewRepository.getReferenceById(reviewEditForm.getId());
+        review.setRating(reviewEditForm.getRating());
+        review.setComment(reviewEditForm.getComment());
+        reviewRepository.save(review);
     }
 }
