@@ -1,20 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <div th:replace="~{fragment :: meta}"></div>
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
-
-    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <div th:replace="~{fragment :: styles}"></div>
 
     <title>レビュー投稿</title>
 </head>
@@ -22,81 +12,70 @@
 <body>
     <div class="samuraitravel-wrapper">
         <!-- ヘッダー -->
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm samuraitravel-navbar">
-            <div class="container samuraitravel-container">
-                <a class="navbar-brand" th:href="@{/}">
-                    <img class="samuraitravel-logo me-1" th:src="@{/images/logo.png}" alt="SAMURAI Travel">
-                </a>
-            </div>
-        </nav>
+        <div th:replace="~{fragment :: header}"></div>
 
         <main>
             <div class="container pt-4 pb-5 samuraitravel-container">
                 <div class="row justify-content-center">
-                    <div class="col-xxl-9 col-xl-10 col-lg-11">
+                    <div class="col-xl-5 col-lg-6 col-md-8">
+
                         <h1 class="mb-4 text-center">レビュー投稿</h1>
-                        <div class="container mt-4">
-                            <div class="row row-cols-1 row-cols-md-2 g-4">
-                                <div th:each="reviwe : ${reviewPage}" class="col-md-6">
-                                    <div class="card h-100">
-                                        <div class="card-body">
-                                            <h4 th:text="${review.getUser().getName()}">ユーザー名</h4>
-                                            <div class="rating">
-                                                <span th:each="i : ${#numbers.sequence(1, 5)}"
-                                                    th:class="${i <= review.getRating()} ? 'rated-star' : 'unrated-star'">&#9733;</span>
-                                            </div>
-                                            <p th:text="${review.getCreatedAt()}" class="m-0">〇〇〇〇年◇◇月××日</p>
-                                            <h5 th:text="${review.getComment()}" class="m-1">コメント</h5>
+
+                        <form method="post" th:action="@{/register}" th:object="${ReviewRegisterForm}">
+
+                            <div class="form-group row mb-3">
+                                <div class="col-md-5">
+                                    <label for="rating" class="col-form-label text-md-left fw-bold">
+                                        <div class="d-flex align-items-center">
+                                            <span class="me-1">評価</span>
                                         </div>
-                                    </div>
+                                    </label>
                                 </div>
-                                <!-- ページネーション -->
-                                <div th:if="${housePage.getTotalPages() > 1}" class="d-flex justify-content-center">
-                                    <nav aria-label="民宿一覧ページ">
-                                        <ul class="pagination">
-                                            <li class="page-item">
-                                                <span th:if="${housePage.isFirst()}" class="page-link disabled">前</span>
-                                                <a th:unless="${housePage.isFirst()}"
-                                                    th:href="@{/admin/houses(page = ${housePage.getNumber() - 1})}"
-                                                    class="page-link samuraitravel-page-link">前</a>
-                                            </li>
-                                            <li th:each="i : ${#numbers.sequence(0, housePage.getTotalPages() - 1)}"
-                                                class="page-item">
-                                                <span th:if="${i == housePage.getNumber()}"
-                                                    class="page-link active samuraitravel-active"
-                                                    th:text="${i + 1}"></span>
-                                                <a th:unless="${i == housePage.getNumber()}"
-                                                    th:href="@{/admin/houses(page = ${i})}"
-                                                    class="page-link samuraitravel-page-link" th:text="${i + 1}"></a>
-                                            </li>
-                                            <li class="page-item">
-                                                <span th:if="${housePage.isLast()}" class="page-link disabled">次</span>
-                                                <a th:unless="${housePage.isLast()}"
-                                                    th:href="@{/admin/houses(page = ${housePage.getNumber() + 1})}"
-                                                    class="page-link samuraitravel-page-link">次</a>
-                                            </li>
-                                        </ul>
-                                    </nav>
+                                <div>
+
+                                </div>
+                                <div class="col-md-7">
+                                    <div th:if="${#fields.hasErrors('name')}" class="text-danger small mb-2"
+                                        th:errors="*{name}"></div>
+                                    <input type="text" class="form-control" th:field="*{name}" autocomplete="name"
+                                        autofocus placeholder="侍 太郎">
+                                </div>
+
+
+
+
+
+                            </div>
+                            <div class="form-group row mb-3">
+                                <div class="col-md-5">
+                                    <label for="name" class="col-form-label text-md-left fw-bold">
+                                        <div class="d-flex align-items-center">
+                                            <span class="me-1">コメント</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="col-md-7">
+                                    <div th:if="${#fields.hasErrors('name')}" class="text-danger small mb-2"
+                                        th:errors="*{name}"></div>
+                                    <input type="text" class="form-control" th:field="*{name}" autocomplete="name"
+                                        autofocus placeholder="侍 太郎">
                                 </div>
                             </div>
-                        </div>
+                            <div class="form-group d-flex justify-content-center my-4">
+                                <button type="submit"
+                                    class="btn text-white shadow-sm w-50 samuraitravel-btn">投稿</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </main>
 
         <!-- フッター -->
-        <footer>
-            <div class="d-flex justify-content-center align-items-center h-100">
-                <p class="text-center text-muted small mb-0">&copy; SAMURAI Travel All rights reserved.</p>
-            </div>
-        </footer>
+        <div th:replace="~{fragment :: footer}"></div>
     </div>
 
-    <!-- Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-        crossorigin="anonymous"></script>
+    <div th:replace="~{fragment :: scripts}"></div>
 </body>
 
 </html>
