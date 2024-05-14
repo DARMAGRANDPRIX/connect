@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <div th:replace="~{fragment :: meta}"></div>
+
+    <div th:replace="~{fragment :: styles}"></div>
+
+    <title>レビュー一覧</title>
+</head>
+
+<body>
+    <div class="samuraitravel-wrapper">
+        <!-- ヘッダー -->
+        <div th:replace="~{fragment :: header}"></div>
+
+        <main>
+            <div class="container pt-4 pb-5 samuraitravel-container">
+                <div class="row justify-content-center">
+                    <div class="col-xxl-9 col-xl-10 col-lg-11">
+                        <nav class="my-3" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                                <li class="breadcrumb-item"><a th:href="@{/houses}">民宿一覧</a></li>
+                                <li class="breadcrumb-item"><a th:href="@{/houses/{id}(id=${houseId})}">民宿詳細</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">レビュー一覧</li>
+                            </ol>
+                        </nav>
+                        <h1 class="mb-4 text-center">レビュー一覧</h1>
+                        <div class="container mt-4">
+                            <div class="row row-cols-1 row-cols-md-2 g-4">
+                                <div th:each="reviwe : ${reviewPage}" class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h4 th:text="${review.getUser().getName()}">ユーザー名</h4>
+                                            <div class="rating">
+                                                <span th:each="i : ${#numbers.sequence(1, 5)}"
+                                                    th:class="${i <= review.getRating()} ? 'rated-star' : 'unrated-star'">&#9733;</span>
+                                            </div>
+                                            <p th:text="${review.getCreatedAt()}" class="m-0">〇〇〇〇年◇◇月××日</p>
+                                            <h5 th:text="${review.getComment()}" class="m-1">コメント</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- ページネーション -->
+                                <div th:if="${housePage.getTotalPages() > 1}" class="d-flex justify-content-center">
+                                    <nav aria-label="民宿一覧ページ">
+                                        <ul class="pagination">
+                                            <li class="page-item">
+                                                <span th:if="${housePage.isFirst()}" class="page-link disabled">前</span>
+                                                <a th:unless="${housePage.isFirst()}"
+                                                    th:href="@{/admin/houses(page = ${housePage.getNumber() - 1})}"
+                                                    class="page-link samuraitravel-page-link">前</a>
+                                            </li>
+                                            <li th:each="i : ${#numbers.sequence(0, housePage.getTotalPages() - 1)}"
+                                                class="page-item">
+                                                <span th:if="${i == housePage.getNumber()}"
+                                                    class="page-link active samuraitravel-active"
+                                                    th:text="${i + 1}"></span>
+                                                <a th:unless="${i == housePage.getNumber()}"
+                                                    th:href="@{/admin/houses(page = ${i})}"
+                                                    class="page-link samuraitravel-page-link" th:text="${i + 1}"></a>
+                                            </li>
+                                            <li class="page-item">
+                                                <span th:if="${housePage.isLast()}" class="page-link disabled">次</span>
+                                                <a th:unless="${housePage.isLast()}"
+                                                    th:href="@{/admin/houses(page = ${housePage.getNumber() + 1})}"
+                                                    class="page-link samuraitravel-page-link">次</a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- フッター -->
+        <div th:replace="~{fragment :: footer}"></div>
+    </div>
+
+    <div th:replace="~{fragment :: scripts}"></div>
+</body>
+
+</html>
