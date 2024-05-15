@@ -39,6 +39,10 @@
                                             </div>
                                             <p th:text="${review.getCreatedAt()}" class="m-0">〇〇〇〇年◇◇月××日</p>
                                             <h5 th:text="${review.getComment()}" class="m-1">コメント</h5>
+                                            <div th:if="${review.getUser().getId() == #authentication.principal.id}">
+                                                <a href="@{/reviews/{id}/edit(id=${review.id})}" class="btn btn-primary">編集</a>
+                                                <button type="button" class="btn btn-danger" th:attr="data-bs-toggle='modal', data-bs-target='#deleteConfirmationModal', data-review-id=${review.getId()}">削除</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
