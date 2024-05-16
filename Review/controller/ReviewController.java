@@ -20,20 +20,20 @@ public class ReviewController {
 
     /* レビュー一覧表示 */
     @GetMapping
-    public String index(@PathVariable("houseId") Integer houseId, Model model, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable) {
-        Page<Review> reviewPage = reviewRepository.findAll(pageable);
-        User user = userRepository.getReferenceById(userDetailsImpl.getUser().getId());
+    public String index(@PathVariable("houseId") Integer houseId, Model model, @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable) {
+        Page<Review> reviewPage = reviewRepository.finByHouseId(houseId, pageable);
+        House house = houseRepository.getReferenceById(houseId);
         model.addAttribute("reviewPage", reviewPage);
-        model.addAttribute("houseId", houseId);
-        model.addAttribute("userId", user.getId());
+        model.addAttribute("house", house);
         return "reviews/index";
     }
 
     /* レビュー投稿画面表示 */
     @GetMapping("/register")
-    public String register (@PathVariable("houseId") Integer houseId, Model houseId) {
+    public String register (@PathVariable("houseId") Integer houseId, Model model) {
+        House house = houseRepository.getReferenceById(houseId);
         model.addAttribute("reviewRegisterForm", new ReviewRegisterForm());
-        model.addAttribute("houseId", houseId);
+        model.addAttribute("house", house);
         return "reviews/register";
     }
 
@@ -50,17 +50,19 @@ public class ReviewController {
     }
 
     /* レビュー編集画面表示 */
-    @GetMapping("/edit")
-    public String edit(@PathVariable(name = "houseId") Integer houseId, Model model) {
-        Review review = reviewRepository.getReferenceById(houseId);
+    @GetMapping("/{reviewId}/edit")
+    public String edit(@PathVariable(name = "houseId") Integer houseId, @PathVariable(name = "reviewId") Integer reviewId, Model model) {
+        Review review = reviewRepository.getReferenceById(reviewId);
+        House house = houseRepository.getReferenceById(houseId);
         ReviewEditForm reviewEditForm = new ReviewEditForm(review.getId(), review.getRating(), review.getComment());
         model.addAttribute("reviewEditForm" ,reviewEditForm);
-        model.addAttribute("houseId", houseId);
+        model.addAttribute("review", review);
+        modal.addAttribute("house", house);
         return "reviews/edit";
     }
 
     /* レビュー更新機能 */
-    @PostMapping("/update")
+    @PostMapping("/{reviewId}/update")
     public String update(@PathVariable("houseId") Integer houseId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @ModelAttribute @Validated ReviewEditForm reviewEditForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if(bindingResult.hasErrors()) {
             return "reviews/edit";
@@ -69,14 +71,6 @@ public class ReviewController {
         reviewService.update(houseId, reviewEditForm, user);
         redirectAttributes.addFlashAttribute("successMessage", "レビューを編集しました。");
         return "redirect:/houses/" + houseId + "/reviews"
-    }
-
-    /* 削除用モーダル表示機能 */
-    @GetMapping("/modal")
-    public String modal(@PathVariable("houseId") Integer houseId, Model model) {
-        Review review = reviewRepository.getReferenceById(houseId);
-        model.addAttribute("houseId", houseId);
-        return "reviews/index";
     }
 
      /* レビュー削除機能 */

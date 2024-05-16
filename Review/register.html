@@ -22,14 +22,14 @@
                             <ol class="breadcrumb mb-0">
                                 <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
                                 <li class="breadcrumb-item"><a th:href="@{/houses}">民宿一覧</a></li>
-                                <li class="breadcrumb-item"><a th:href="@{/houses/{id}(id=${houseId})}">民宿詳細</a></li>
+                                <li class="breadcrumb-item"><a th:href="@{/houses/{houseId}(id=${house.id})}">民宿詳細</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">レビュー投稿</li>
                             </ol>
                         </nav>
                         
-                        <h1 class="mb-4 text-center">レビュー投稿</h1>
+                        <h1 class="mb-4 text-center"><span th:text="${house.name}">民宿名</span>のレビュー投稿</h1>
 
-                        <form method="post" th:action="@{/houses/{id}/reviews/create(id=${houseId})}"
+                        <form method="post" th:action="@{/houses/{houseId}/reviews/create(houseId=${house.id})}"
                             th:object="${ReviewRegisterForm}">
 
                             <div class="form-group row mb-3">
