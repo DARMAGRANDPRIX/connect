@@ -19,7 +19,8 @@ import com.example.samuraitravel.repository.HouseRepository;
  @RequestMapping("/houses")
 public class HouseController {
      private final HouseRepository houseRepository;   
-     private final ReviewRepository reviewRepository;     
+     private final ReviewRepository reviewRepository; 
+     private final FavoriteRepository favoriteRepository;    
      
      public HouseController(HouseRepository houseRepository) {
          this.houseRepository = houseRepository;            
@@ -75,12 +76,14 @@ public class HouseController {
          User user = userRepository.getReferenceById(userDetailsImpl.getUser().getId());
          boolean userHasReviewes = reviewRepository.findByHouseIdAndUserId(houseId, user.getId()).isPresent();
          boolean houseHasReviews = reviewRepository.findTop6ByHouseIdOrderByCreatedAtDesc(houseId);
+         boolean hasFavorites = favoriteRepository.findByHouseIdAndUserId(houseId, user.getId()).isPresent();
          List<Review> reviews = reviewRepository.findTop6ByHouseIdOrderByCreatedAtDesc(houseId).isPresent();
          model.addAttribute("house", house);         
          model.addAttribute("reservationInputForm", new ReservationInputForm());
          model.addAttribute("userHasReviewes", userHasReviewes);
          model.addAttribute("reviews", reviews);
          model.addAttribute("houseHasReviews", houseHasReviews);
+         model.addAttribute("hasFavorites", hasFavorites);
          return "houses/show";
      } 
 }
