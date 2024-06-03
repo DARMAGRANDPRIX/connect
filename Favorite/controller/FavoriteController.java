@@ -20,7 +20,7 @@ public class ReviewController {
     /* お気に入り一覧表示 */
     @GetMapping("/favorites")
     public String index(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, Model model, @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable) {
-        User user = userRepository.getReferenceById(userDetailsImpl.getUser().getId());
+        User user = userDetailsImpl.getUser();
         Page<Favorite> favoritePage = favoriteRepository.findByUserId(user.getId(), pageable);
         model.addAttribute("favoritePage", favoritePage);
         return "favorites/index";
@@ -29,7 +29,7 @@ public class ReviewController {
     /* お気に入り追加機能 */
     @PostMapping("houses/{houseId}/favorites/add")
     public String add (@PathVariable("houseId") Integer houseId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl, Model model) {
-        User user = userRepository.getReferenceById(userDetailsImpl.getUser().getId());
+        User user = userDetailsImpl.getUser();
         favoriteService.add(houseId, user.getId());
         return "redirect:/houses/" + houseId;
     }
@@ -38,7 +38,7 @@ public class ReviewController {
      /* お気に入り解除機能 */
      @PostMapping("houses/{houseId}/favorites/delete")
      public String add (@PathVariable("houseId") Integer houseId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl, Model model) {
-         User user = userRepository.getReferenceById(userDetailsImpl.getUser().getId());
+        User user = userDetailsImpl.getUser();
          favoriteService.delete(houseId, user.getId());
          return "redirect:/houses/" + houseId;
      }

@@ -71,19 +71,24 @@ public class HouseController {
          return "houses/index";
      }
      @GetMapping("/{houseId}")
-     public String show(@PathVariable(name = "houseId") Integer houseId, Model model, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,) {
+     public String show(@PathVariable(name = "houseId") Integer houseId, Model model, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
          House house = houseRepository.getReferenceById(houseId);
-         User user = userRepository.getReferenceById(userDetailsImpl.getUser().getId());
-         boolean userHasReviewes = reviewRepository.findByHouseIdAndUserId(houseId, user.getId()).isPresent();
-         boolean houseHasReviews = reviewRepository.findTop6ByHouseIdOrderByCreatedAtDesc(houseId);
-         boolean hasFavorites = favoriteRepository.findByHouseIdAndUserId(houseId, user.getId()).isPresent();
-         List<Review> reviews = reviewRepository.findTop6ByHouseIdOrderByCreatedAtDesc(houseId).isPresent();
-         model.addAttribute("house", house);         
+         List<Review> reviews = reviewRepository.findTop6ByHouseIdOrderByCreatedAtDesc(houseId);
+         boolean houseHasReviews = !reviews.isEmpty();
+         model.addAttribute("house", house);
          model.addAttribute("reservationInputForm", new ReservationInputForm());
-         model.addAttribute("userHasReviewes", userHasReviewes);
          model.addAttribute("reviews", reviews);
          model.addAttribute("houseHasReviews", houseHasReviews);
-         model.addAttribute("hasFavorites", hasFavorites);
+
+         if (userDetailsImpl != null) {
+            User user = userDetailsImpl.getUser();
+            boolean userHasReviews = !reviewRepository.findByHouseIdAndUserId(houseId, user.getId()).isEmpty();
+            boolean userHasFavorites = !favoriteRepository.findByHouseIdAndUserId(houseId, user.getId()).isEmpty();
+            model.addAttribute("user", user);
+            model.addAttribute("userHasReviews", userHasReviews);
+            model.addAttribute("userHasFavorites", userHasFavorites);
+        };
+
          return "houses/show";
-     } 
+     }
 }
